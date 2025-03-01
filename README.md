@@ -19,7 +19,7 @@ Once you have the global deps run this
 ```sh
 git clone --depth=1 https://github.com/Jason-Goon/neovimugicha.git && \
 cd neovimugicha && \
-chmod +x setup.sh delete.sh && \
+chmod +x setup.sh cleanup.sh && \
 ./setup.sh
 ```
 
