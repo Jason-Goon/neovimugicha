@@ -11,7 +11,7 @@ sudo pacman -S nodejs npm unzip ripgrep fd
 
 **Gentoo:**
 ```sh
-sudo emerge -av dev-lang/nodejs app-arch/unzip sys-apps/ripgrep sys-apps/fd
+sudo emerge -av net-libs/nodejs app-arch/unzip sys-apps/ripgrep sys-apps/fd
 ```
 
 Once you have the global deps run this
