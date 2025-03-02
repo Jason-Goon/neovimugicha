@@ -20,13 +20,16 @@ fi
 
 echo "Proceeding with a clean install..."
 
-# Create necessary directories
-mkdir -p "$CONFIG_DIR/lua/themes"
-mkdir -p "$LAZY_DIR"
+# Create ~/.config/nvim before cloning
+mkdir -p "$CONFIG_DIR"
 
-# Clone Neovim configuration into ~/.config/nvim
+# Clone Neovim configuration into a temp directory
 echo "Cloning Neovim configuration from GitHub..."
-git clone --depth=1 --branch "$BRANCH" "$GITHUB_REPO" "$CONFIG_DIR"
+git clone --depth=1 --branch "$BRANCH" "$GITHUB_REPO" "$HOME/neovimugicha"
+
+# Move everything into ~/.config/nvim/
+echo "Moving configuration files into ~/.config/nvim/..."
+mv "$HOME/neovimugicha/"* "$CONFIG_DIR/"
 
 # Copy the theme explicitly
 echo "Copying based_theme.lua..."
@@ -35,6 +38,9 @@ cp "$CONFIG_DIR/lua/themes/based_theme.lua" "$THEME_PATH/based_theme.lua"
 # Ensure math templates are placed correctly
 echo "Setting up math templates..."
 mv "$CONFIG_DIR/math-templates" "$MATH_TEMPLATE_DIR"
+
+# Remove the temporary cloned repo
+rm -rf "$HOME/neovimugicha"
 
 # Check for system dependencies
 echo "Checking system dependencies..."
