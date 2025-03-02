@@ -6,12 +6,36 @@ Global dependencies for **Arch** or **Gentoo**:
 
 **Arch:**  
 ```sh
-sudo pacman -S nodejs npm unzip ripgrep fd texlive-most zathura
+sudo pacman -S neovim \
+               nodejs \
+               npm \
+               unzip \
+               ripgrep \
+               fd \
+               texlive-binextra \
+               texlive-latex \
+               texlive-latexextra \
+               texlive-latexrecommended \
+               texlive-mathscience \
+               texlive-fontsextra \
+               zathura \
+               git \
+               github-cli
 ```
+
 
 **Gentoo:**
 ```sh
-sudo emerge -av net-libs/nodejs app-arch/unzip sys-apps/ripgrep sys-apps/fd app-text/texlive app-text/zathura
+sudo emerge -av app-editors/neovim \
+               net-libs/nodejs \
+               app-arch/unzip \
+               sys-apps/ripgrep \
+               sys-apps/fd \
+               app-text/texlive \
+               app-text/zathura \
+               dev-vcs/git \
+               dev-util/github-cli
+ 
 
 ```
 
