@@ -41,30 +41,27 @@ cp "$HOME/neovimugicha/lua/init.lua" "$CONFIG_DIR/init.lua"
 echo "Copying based_theme.lua..."
 cp "$HOME/neovimugicha/lua/themes/based_theme.lua" "$THEME_PATH/based_theme.lua"
 
-# Setup math templates if chosen
-if [ "$enable_math" = "y" ] || [ "$enable_math" = "Y" ]; then
-    echo "Enabling math templates..."
-    cp -r "$HOME/neovimugicha/math-templates" "$MATH_TEMPLATE_DIR"
+# Modify plugins.lua safely
+PLUGIN_FILE="$CONFIG_DIR/lua/plugins.lua"
 
-    # Append VimTeX to plugins.lua
-    echo "Adding VimTeX to plugins..."
-    echo '{ "lervag/vimtex", config = function() vim.g.vimtex_view_method = "zathura" vim.g.vimtex_compiler_method = "latexmk" vim.g.vimtex_quickfix_mode = 0 end },' >> "$CONFIG_DIR/lua/plugins.lua"
+# If math is enabled, add VimTeX plugin properly
+if [ "$enable_math" = "y" ] || [ "$enable_math" = "Y" ]; then
+    echo "Enabling math support with VimTeX..."
+    sed -i '/return {/a \
+    { "lervag/vimtex", config = function() vim.g.vimtex_view_method = "zathura" vim.g.vimtex_compiler_method = "latexmk" vim.g.vimtex_quickfix_mode = 0 end },' "$PLUGIN_FILE"
 
     # Ensure math.lua is included in init.lua
     echo 'require("math")' >> "$CONFIG_DIR/init.lua"
-else
-    echo "Skipping math template setup..."
 fi
 
-# Setup Copilot if chosen
+# If Copilot is enabled, add Copilot plugin properly
 if [ "$enable_copilot" = "y" ] || [ "$enable_copilot" = "Y" ]; then
-    echo "Adding Copilot to plugins..."
-    echo '{ "github/copilot.vim" },' >> "$CONFIG_DIR/lua/plugins.lua"
+    echo "Enabling Copilot support..."
+    sed -i '/return {/a \
+    { "github/copilot.vim" },' "$PLUGIN_FILE"
 
     echo "Adding Copilot toggle keybind to settings..."
     echo 'vim.api.nvim_set_keymap("n", "<leader>co", ":Copilot toggle<CR>", { noremap = true, silent = true })' >> "$CONFIG_DIR/lua/settings.lua"
-else
-    echo "Skipping Copilot setup..."
 fi
 
 # Remove the temporary cloned repo
