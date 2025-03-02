@@ -1,144 +1,57 @@
 #!/bin/sh
 set -e
 
-echo "checking for a clean neovim environment..."
+GITHUB_REPO="https://github.com/Jason-Goon/neovimugicha"
+CONFIG_DIR="$HOME/.config/nvim"
+LAZY_DIR="$HOME/.local/share/nvim/lazy"
+MATH_TEMPLATE_REPO="$GITHUB_REPO/math-templates"
+MATH_TEMPLATE_DIR="$HOME/.config/nvim/math-templates"
+THEME_PATH="$CONFIG_DIR/lua/themes"
 
-# already exists kill
-
-if [ -d "$HOME/.config/nvim" ]; then
-  echo "Error: ~/.config/nvim already exists. Please run your delete script first to remove the existing configuration."
-  exit 1
+echo "Checking for a clean Neovim environment..."
+if [ -d "$CONFIG_DIR" ]; then
+    echo "Error: $CONFIG_DIR already exists. Please remove the existing configuration first."
+    exit 1
 fi
 
-echo "proceeding with a clean install..."
+echo "Proceeding with a clean install..."
 
-# create directories 
+# Ask user for optional features
+read -p "Enable math support (LaTeX setup)? [y/N]: " enable_math
+read -p "Enable GitHub Copilot support? [y/N]: " enable_copilot
 
-mkdir -p ~/.config/nvim/lua/themes
-mkdir -p ~/.local/share/nvim/lazy
+# Create necessary directories
+mkdir -p "$CONFIG_DIR/lua/themes"
+mkdir -p "$LAZY_DIR"
 
+# Clone Neovim configuration
+echo "Cloning Neovim configuration from GitHub..."
+git clone --depth=1 "$GITHUB_REPO" "$CONFIG_DIR"
 
-##################################
-# create configuration files
-##################################
+# Setup math templates if chosen
+if [ "$enable_math" = "y" ] || [ "$enable_math" = "Y" ]; then
+    echo "Cloning LaTeX math templates..."
+    git clone --depth=1 "$MATH_TEMPLATE_REPO" "$MATH_TEMPLATE_DIR"
+else
+    echo "Skipping math template setup..."
+fi
 
+# Check for system dependencies
+echo "Checking system dependencies..."
+MISSING_PACKAGES=""
+for pkg in latexmk zathura node npm unzip ripgrep fd; do
+    if ! command -v "$pkg" >/dev/null 2>&1; then
+        MISSING_PACKAGES="$MISSING_PACKAGES $pkg"
+    fi
+done
 
-# 1. init.lua: bootstrap lazy.nvim synchronously, then load settings and apply the theme.
-cat << 'EOF' > ~/.config/nvim/init.lua
--- Bootstrap lazy.nvim so that plugins are loaded synchronously
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    lazypath,
-  })
-end
-vim.opt.rtp:prepend(lazypath)
+if [ -n "$MISSING_PACKAGES" ]; then
+    echo "Warning: The following dependencies are missing: $MISSING_PACKAGES"
+    echo "Please install them manually before running Neovim."
+fi
 
--- force load synchronously
-require("lazy").setup(require("plugins"), { defaults = { lazy = false } })
-
--- load settings and based_theme
-require("settings")
-require("lush").apply(require("themes.based_theme"))
-EOF
-echo "Created init.lua"
-
-# 2. settings.lua: basic settings
-cat << 'EOF' > ~/.config/nvim/lua/settings.lua
--- Basic Neovim settings
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.expandtab = true
-vim.opt.shiftwidth = 4
-vim.opt.tabstop = 4
-vim.opt.smartindent = true
-vim.opt.termguicolors = true
-vim.opt.cursorline = true
-vim.opt.mouse = "a"
-
--- leader: space
-vim.g.mapleader = " "
-
--- LSP and autocompletion
-local lspconfig = require("lspconfig")
-local cmp_capabilities = require("cmp_nvim_lsp").default_capabilities()
-
--- mason setup
-require("mason").setup()
-require("mason-lspconfig").setup({
-  ensure_installed = { "rust_analyzer", "clangd", "pyright", "ts_ls", "html", "cssls" }
-})
-
-local servers = { "rust_analyzer", "clangd", "pyright", "ts_ls", "html", "cssls" }
-for _, server in ipairs(servers) do
-  lspconfig[server].setup({
-    capabilities = cmp_capabilities
-  })
-end
-
--- nvim-tree configuration
-require("nvim-tree").setup({
-  view = {
-    width = 30,
-    side = "left",
-  },
-  filters = {
-    custom = { ".git", "node_modules", ".cache" }
-  },
-  git = {
-    enable = true,
-    ignore = false,
-  },
-})
-
--- Bind <leader>e (Space + e) to toggle NvimTree
-vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>", { noremap = true, silent = true })
-EOF
-echo "created settings.lua"
-
-# 3. plugins.lua
-cat << 'EOF' > ~/.config/nvim/lua/plugins.lua
-return {
-  -- browser with icons (nvim-tree)
-  { "nvim-tree/nvim-tree.lua", dependencies = { "nvim-tree/nvim-web-devicons" } },
-
-  -- treesitter support
-  { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
-
-  -- LSP configuration and autocompletion
-  { "neovim/nvim-lspconfig" },
-  { "williamboman/mason.nvim", config = function() require("mason").setup() end },
-  { "williamboman/mason-lspconfig.nvim" },
-  { "hrsh7th/nvim-cmp", dependencies = { "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip" } },
-
-  -- github integration
-  { "tpope/vim-fugitive" },
-  { "lewis6991/gitsigns.nvim", config = function() require("gitsigns").setup() end },
-
-  -- based theme nvim port dep
-  { "rktjmp/lush.nvim" },
-
-  -- nicer interface
-  { "nvim-lualine/lualine.nvim" }
-}
-EOF
-echo "created plugins.lua"
-
-###################################################
-# install and copy based_theme.lua from repo root
-###################################################
-
-cp ./based_theme.lua ~/.config/nvim/lua/themes/based_theme.lua
-echo "Copied based_theme.lua to Neovim theme directory."
-
-#####################################
-# install and config lazy.nvim 
-#####################################
-LAZY_PATH="$HOME/.local/share/nvim/lazy/lazy.nvim"
+# Install lazy.nvim if not present
+LAZY_PATH="$LAZY_DIR/lazy.nvim"
 if [ ! -d "$LAZY_PATH" ]; then
     echo "Installing lazy.nvim..."
     git clone --filter=blob:none https://github.com/folke/lazy.nvim.git "$LAZY_PATH"
@@ -146,15 +59,27 @@ else
     echo "lazy.nvim already installed, skipping..."
 fi
 
-#####################################
-# global dep message 
-#####################################
-echo "make sure nodejs, npm, unzip, ripgrep and fd is installed. repo offers these commands for arch and gentoo otherwise on you chief"
+# Pull custom theme from GitHub
+echo "Pulling based_theme.lua..."
+mkdir -p "$THEME_PATH"
+curl -fsSL "$GITHUB_REPO/themes/based_theme.lua" -o "$THEME_PATH/based_theme.lua"
 
-#####################################
-# headless nvim plugins install
-#####################################
+# Install Neovim plugins
 echo "Installing Neovim plugins..."
 nvim --headless "+Lazy sync" +qall
 
-echo "gz king go nuts"
+# Setup Copilot if chosen
+if [ "$enable_copilot" = "y" ] || [ "$enable_copilot" = "Y" ]; then
+    echo "Checking GitHub Copilot authentication..."
+    if gh auth status >/dev/null 2>&1; then
+        echo "GitHub authentication detected. Copilot should work."
+    else
+        echo "Warning: GitHub authentication not detected."
+        echo "Run 'gh auth login' to authenticate before using Copilot."
+    fi
+else
+    echo "Skipping Copilot setup..."
+fi
+
+echo "Setup complete. Neovim is ready to use!"
+c

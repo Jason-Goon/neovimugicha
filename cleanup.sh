@@ -3,20 +3,36 @@ set -e
 
 echo "Deleting existing Neovim configuration..."
 
-# delete neovim config directory if it exists
+# Delete Neovim config directory
 if [ -d "$HOME/.config/nvim" ]; then
     rm -rf "$HOME/.config/nvim"
-    echo "deleted ~/.config/nvim"
+    echo "Deleted ~/.config/nvim"
 else
-    echo "no Neovim config directory found at ~/.config/nvim"
+    echo "No Neovim config directory found at ~/.config/nvim"
 fi
 
-# delete lazy.nvim if it exists
+# Delete lazy.nvim installation
 if [ -d "$HOME/.local/share/nvim/lazy/lazy.nvim" ]; then
     rm -rf "$HOME/.local/share/nvim/lazy/lazy.nvim"
-    echo "deleted lazy.nvim plugin at ~/.local/share/nvim/lazy/lazy.nvim"
+    echo "Deleted lazy.nvim plugin at ~/.local/share/nvim/lazy/lazy.nvim"
 else
-    echo "no lazy.nvim installation found."
+    echo "No lazy.nvim installation found."
 fi
 
-echo "you have succesfully uninstalled neovimugicha"
+# Delete math template directory if math support was enabled
+if [ -d "$HOME/.config/nvim/math-templates" ]; then
+    rm -rf "$HOME/.config/nvim/math-templates"
+    echo "Deleted math templates at ~/.config/nvim/math-templates"
+else
+    echo "No math templates found."
+fi
+
+# Remove any cached Neovim data
+if [ -d "$HOME/.local/state/nvim" ]; then
+    rm -rf "$HOME/.local/state/nvim"
+    echo "Deleted Neovim cached state at ~/.local/state/nvim"
+else
+    echo "No cached Neovim state found."
+fi
+
+echo "Neovimugicha has been successfully uninstalled."

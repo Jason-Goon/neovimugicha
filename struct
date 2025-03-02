@@ -1,0 +1,16 @@
+├── 📂 neovimugicha/                        # Your GitHub repo (local clone)
+│   ├── 📂 lua/
+│   │   ├── themes/
+│   │   │   ├── based_theme.lua             # Your theme (stored in repo)
+│   │   ├── settings.lua                     # General settings (stored in repo)
+│   │   ├── plugins.lua                      # Plugins list (stored in repo)
+│   │   ├── math.lua                         # Math-specific settings (stored in repo)
+│   ├── init.lua                             # Main Neovim entry point (stored in repo)
+│   ├── setup.sh                             # Installation script (stored in repo)
+│   ├── 📂 math-templates/                   # Math templates (stored in repo)
+│   │   ├── preamble.tex
+│   │   ├── macros.tex
+│   │   ├── letterfonts.tex
+│   │   ├── template.tex
+│
+└── setup.sh    c
