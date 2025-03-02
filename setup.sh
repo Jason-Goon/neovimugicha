@@ -1,11 +1,12 @@
 #!/bin/sh
 set -e
 
-GITHUB_REPO="https://github.com/Jason-Goon/neovimugicha"
+GITHUB_REPO="https://github.com/Jason-Goon/neovimugicha.git"
+BRANCH="master"
+
 CONFIG_DIR="$HOME/.config/nvim"
 LAZY_DIR="$HOME/.local/share/nvim/lazy"
-MATH_TEMPLATE_REPO="$GITHUB_REPO/math-templates"
-MATH_TEMPLATE_DIR="$HOME/.config/nvim/math-templates"
+MATH_TEMPLATE_DIR="$CONFIG_DIR/math-templates"
 THEME_PATH="$CONFIG_DIR/lua/themes"
 
 echo "Checking for a clean Neovim environment..."
@@ -26,15 +27,28 @@ mkdir -p "$LAZY_DIR"
 
 # Clone Neovim configuration
 echo "Cloning Neovim configuration from GitHub..."
-git clone --depth=1 "$GITHUB_REPO" "$CONFIG_DIR"
+git clone --depth=1 --branch "$BRANCH" "$GITHUB_REPO" "$HOME/neovimugicha"
+
+# Move config files into ~/.config/nvim/
+echo "Moving configuration files into place..."
+mv "$HOME/neovimugicha/lua" "$CONFIG_DIR/"
+mv "$HOME/neovimugicha/init.lua" "$CONFIG_DIR/init.lua"
 
 # Setup math templates if chosen
 if [ "$enable_math" = "y" ] || [ "$enable_math" = "Y" ]; then
-    echo "Cloning LaTeX math templates..."
-    git clone --depth=1 "$MATH_TEMPLATE_REPO" "$MATH_TEMPLATE_DIR"
+    echo "Enabling math templates..."
+    mv "$HOME/neovimugicha/math-templates" "$MATH_TEMPLATE_DIR"
 else
     echo "Skipping math template setup..."
+    rm -rf "$HOME/neovimugicha/math-templates"  # Remove it if user doesn't want it
 fi
+
+# Move custom theme into ~/.config/nvim/lua/themes/
+echo "Ensuring based_theme.lua is in the correct location..."
+mv "$CONFIG_DIR/lua/themes/based_theme.lua" "$THEME_PATH/based_theme.lua"
+
+# Remove leftover cloned repo
+rm -rf "$HOME/neovimugicha"
 
 # Check for system dependencies
 echo "Checking system dependencies..."
@@ -59,11 +73,6 @@ else
     echo "lazy.nvim already installed, skipping..."
 fi
 
-# Pull custom theme from GitHub
-echo "Pulling based_theme.lua..."
-mkdir -p "$THEME_PATH"
-curl -fsSL "$GITHUB_REPO/themes/based_theme.lua" -o "$THEME_PATH/based_theme.lua"
-
 # Install Neovim plugins
 echo "Installing Neovim plugins..."
 nvim --headless "+Lazy sync" +qall
@@ -82,4 +91,3 @@ else
 fi
 
 echo "Setup complete. Neovim is ready to use!"
-c

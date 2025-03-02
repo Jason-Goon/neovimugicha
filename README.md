@@ -6,21 +6,19 @@ Global dependencies for **Arch** or **Gentoo**:
 
 **Arch:**  
 ```sh
-sudo pacman -S nodejs npm unzip ripgrep fd
+sudo pacman -S nodejs npm unzip ripgrep fd texlive-most zathura
 ```
 
 **Gentoo:**
 ```sh
-sudo emerge -av net-libs/nodejs app-arch/unzip sys-apps/ripgrep sys-apps/fd
+sudo emerge -av net-libs/nodejs app-arch/unzip sys-apps/ripgrep sys-apps/fd app-text/texlive app-text/zathura
+
 ```
 
 Once you have the global deps run this
 
 ```sh
-git clone --depth=1 https://github.com/Jason-Goon/neovimugicha.git && \
-cd neovimugicha && \
-chmod +x setup.sh cleanup.sh && \
-./setup.sh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/Jason-Goon/neovimugicha/master/setup.sh)"
 ```
 
 

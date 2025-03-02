@@ -6,7 +6,8 @@
 │   │   ├── plugins.lua                      # Plugins list (stored in repo)
 │   │   ├── math.lua                         # Math-specific settings (stored in repo)
 │   ├── init.lua                             # Main Neovim entry point (stored in repo)
-│   ├── setup.sh                             # Installation script (stored in repo)
+│   ├── setup.sh   
+│   ├── cleanup.sh                          # Installation script (stored in repo)
 │   ├── 📂 math-templates/                   # Math templates (stored in repo)
 │   │   ├── preamble.tex
 │   │   ├── macros.tex
