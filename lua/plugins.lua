@@ -21,7 +21,7 @@ return {
   -- Nicer interface
   { "nvim-lualine/lualine.nvim" },
 
-  -- LaTeX Support (Always Enabled)
+  -- LaTeX Support 
   {
       "lervag/vimtex",
       config = function()
@@ -31,7 +31,7 @@ return {
       end
   },
 
-  -- GitHub Copilot (Always Enabled)
+  -- GitHub Copilot 
   {
       "github/copilot.vim",
       config = function()
