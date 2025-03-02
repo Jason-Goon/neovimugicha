@@ -9,6 +9,8 @@ BRANCH="master"
 
 CONFIG_DIR="$HOME/.config/nvim"
 LAZY_DIR="$HOME/.local/share/nvim/lazy"
+# MATH_TEMPLATE_DIR and THEME_PATH are defined here in case you need them later,
+# but no additional commands are needed to move or copy math-templates.
 MATH_TEMPLATE_DIR="$CONFIG_DIR/math-templates"
 THEME_PATH="$CONFIG_DIR/lua/themes"
 
@@ -30,12 +32,6 @@ git clone --depth=1 --branch "$BRANCH" "$GITHUB_REPO" "$HOME/neovimugicha"
 # Move everything into ~/.config/nvim/
 echo "Moving configuration files into ~/.config/nvim/..."
 mv "$HOME/neovimugicha/"* "$CONFIG_DIR/"
-
-# Ensure math templates are placed correctly
-echo "Ensuring math templates are correctly placed..."
-if [ ! -d "$MATH_TEMPLATE_DIR" ]; then
-    cp -r "$CONFIG_DIR/math-templates" "$MATH_TEMPLATE_DIR"
-fi
 
 # Remove the temporary cloned repo
 rm -rf "$HOME/neovimugicha"
