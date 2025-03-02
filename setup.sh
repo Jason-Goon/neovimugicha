@@ -10,6 +10,7 @@ BRANCH="master"
 CONFIG_DIR="$HOME/.config/nvim"
 LAZY_DIR="$HOME/.local/share/nvim/lazy"
 MATH_TEMPLATE_DIR="$CONFIG_DIR/math-templates"
+THEME_PATH="$CONFIG_DIR/lua/themes"
 
 echo "Checking for a clean Neovim environment..."
 if [ -d "$CONFIG_DIR" ]; then
@@ -33,15 +34,37 @@ git clone --depth=1 --branch "$BRANCH" "$GITHUB_REPO" "$HOME/neovimugicha"
 
 # Copy configuration files into ~/.config/nvim/
 echo "Copying configuration files into place..."
-cp -r "$HOME/neovimugicha/lua" "$CONFIG_DIR/"
+cp -r "$HOME/neovimugicha/lua/"* "$CONFIG_DIR/lua/"
 cp "$HOME/neovimugicha/lua/init.lua" "$CONFIG_DIR/init.lua"
+
+# Copy the theme explicitly
+echo "Copying based_theme.lua..."
+cp "$HOME/neovimugicha/lua/themes/based_theme.lua" "$THEME_PATH/based_theme.lua"
 
 # Setup math templates if chosen
 if [ "$enable_math" = "y" ] || [ "$enable_math" = "Y" ]; then
     echo "Enabling math templates..."
     cp -r "$HOME/neovimugicha/math-templates" "$MATH_TEMPLATE_DIR"
+
+    # Append VimTeX to plugins.lua
+    echo "Adding VimTeX to plugins..."
+    echo '{ "lervag/vimtex", config = function() vim.g.vimtex_view_method = "zathura" vim.g.vimtex_compiler_method = "latexmk" vim.g.vimtex_quickfix_mode = 0 end },' >> "$CONFIG_DIR/lua/plugins.lua"
+
+    # Ensure math.lua is included in init.lua
+    echo 'require("math")' >> "$CONFIG_DIR/init.lua"
 else
     echo "Skipping math template setup..."
+fi
+
+# Setup Copilot if chosen
+if [ "$enable_copilot" = "y" ] || [ "$enable_copilot" = "Y" ]; then
+    echo "Adding Copilot to plugins..."
+    echo '{ "github/copilot.vim" },' >> "$CONFIG_DIR/lua/plugins.lua"
+
+    echo "Adding Copilot toggle keybind to settings..."
+    echo 'vim.api.nvim_set_keymap("n", "<leader>co", ":Copilot toggle<CR>", { noremap = true, silent = true })' >> "$CONFIG_DIR/lua/settings.lua"
+else
+    echo "Skipping Copilot setup..."
 fi
 
 # Remove the temporary cloned repo
@@ -73,19 +96,6 @@ fi
 # Install Neovim plugins
 echo "Installing Neovim plugins..."
 nvim --headless "+Lazy sync" +qall
-
-# Setup Copilot if chosen
-if [ "$enable_copilot" = "y" ] || [ "$enable_copilot" = "Y" ]; then
-    echo "Checking GitHub Copilot authentication..."
-    if gh auth status >/dev/null 2>&1; then
-        echo "GitHub authentication detected. Copilot should work."
-    else
-        echo "Warning: GitHub authentication not detected."
-        echo "Run 'gh auth login' to authenticate before using Copilot."
-    fi
-else
-    echo "Skipping Copilot setup..."
-fi
 
 echo "Setup complete. Neovim is ready to use!"
 
