@@ -10,6 +10,7 @@ BRANCH="master"
 CONFIG_DIR="$HOME/.config/nvim"
 LAZY_DIR="$HOME/.local/share/nvim/lazy"
 MATH_TEMPLATE_DIR="$CONFIG_DIR/math-templates"
+THEME_PATH="$CONFIG_DIR/lua/themes"
 
 echo "Checking for a clean Neovim environment..."
 if [ -d "$CONFIG_DIR" ]; then
@@ -33,8 +34,12 @@ git clone --depth=1 --branch "$BRANCH" "$GITHUB_REPO" "$HOME/neovimugicha"
 
 # Copy configuration files into ~/.config/nvim/
 echo "Copying configuration files into place..."
-cp -r "$HOME/neovimugicha/lua" "$CONFIG_DIR/"
+cp -r "$HOME/neovimugicha/lua/"* "$CONFIG_DIR/lua/"
 cp "$HOME/neovimugicha/lua/init.lua" "$CONFIG_DIR/init.lua"
+
+# Copy the theme explicitly
+echo "Copying based_theme.lua..."
+cp "$HOME/neovimugicha/lua/themes/based_theme.lua" "$THEME_PATH/based_theme.lua"
 
 # Setup math templates if chosen
 if [ "$enable_math" = "y" ] || [ "$enable_math" = "Y" ]; then
