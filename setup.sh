@@ -31,9 +31,6 @@ git clone --depth=1 --branch "$BRANCH" "$GITHUB_REPO" "$HOME/neovimugicha"
 echo "Moving configuration files into ~/.config/nvim/..."
 mv "$HOME/neovimugicha/"* "$CONFIG_DIR/"
 
-# Copy the theme explicitly
-echo "Copying based_theme.lua..."
-cp "$CONFIG_DIR/lua/themes/based_theme.lua" "$THEME_PATH/based_theme.lua"
 
 # Ensure math templates are placed correctly
 echo "Setting up math templates..."
