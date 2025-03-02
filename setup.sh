@@ -12,6 +12,15 @@ LAZY_DIR="$HOME/.local/share/nvim/lazy"
 MATH_TEMPLATE_DIR="$CONFIG_DIR/math-templates"
 THEME_PATH="$CONFIG_DIR/lua/themes"
 
+echo "                                                                                                "
+echo " ███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗██╗   ██╗ ██████╗ ██╗ ██████╗██╗  ██╗ █████╗ "
+echo " ████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║██║   ██║██╔════╝ ██║██╔════╝██║  ██║██╔══██╗"
+echo " ██╔██╗ ██║█████╗  ██║   ██║██║   ██║██║██╔████╔██║██║   ██║██║  ███╗██║██║     ███████║███████║"
+echo " ██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║██║   ██║██║   ██║██║██║     ██╔══██║██╔══██║"
+echo " ██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║╚██████╔╝╚██████╔╝██║╚██████╗██║  ██║██║  ██║"
+echo " ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝ ╚═════╝  ╚═════╝ ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝"
+echo "                                                                                                "
+
 echo "Checking for a clean Neovim environment..."
 if [ -d "$CONFIG_DIR" ]; then
     echo "Error: $CONFIG_DIR already exists. Please remove the existing configuration first."
@@ -19,10 +28,6 @@ if [ -d "$CONFIG_DIR" ]; then
 fi
 
 echo "Proceeding with a clean install..."
-
-# Ask user for optional features
-read -p "Enable math support (LaTeX setup)? [y/N]: " enable_math
-read -p "Enable GitHub Copilot support? [y/N]: " enable_copilot
 
 # Create necessary directories
 mkdir -p "$CONFIG_DIR/lua/themes"
@@ -36,15 +41,14 @@ git clone --depth=1 --branch "$BRANCH" "$GITHUB_REPO" "$HOME/neovimugicha"
 echo "Copying configuration files into place..."
 cp -r "$HOME/neovimugicha/lua/"* "$CONFIG_DIR/lua/"
 cp "$HOME/neovimugicha/lua/init.lua" "$CONFIG_DIR/init.lua"
+cp -r "$HOME/neovimugicha/math-templates" "$MATH_TEMPLATE_DIR"
 
+# Copy ASCII Art to config
+echo "Copying ASCII Art..."
+cp "$HOME/neovimugicha/asciiart.txt" "$CONFIG_DIR/asciiart.txt"
+echo "✓ ASCII Art copied successfully."
 
-# Setup math templates if chosen
-if [ "$enable_math" = "y" ] || [ "$enable_math" = "Y" ]; then
-    echo "Enabling math templates..."
-    cp -r "$HOME/neovimugicha/math-templates" "$MATH_TEMPLATE_DIR"
-else
-    echo "Skipping math template setup..."
-fi
+echo "✓ Configuration files copied successfully."
 
 # Remove the temporary cloned repo
 rm -rf "$HOME/neovimugicha"
@@ -59,8 +63,10 @@ for pkg in latexmk zathura node npm unzip ripgrep fd; do
 done
 
 if [ -n "$MISSING_PACKAGES" ]; then
-    echo "Warning: The following dependencies are missing:$MISSING_PACKAGES"
+    echo "⚠ Warning: The following dependencies are missing: $MISSING_PACKAGES"
     echo "Please install them manually before running Neovim."
+else
+    echo "✓ All necessary dependencies are installed."
 fi
 
 # Install lazy.nvim if not present
@@ -68,25 +74,16 @@ LAZY_PATH="$LAZY_DIR/lazy.nvim"
 if [ ! -d "$LAZY_PATH" ]; then
     echo "Installing lazy.nvim..."
     git clone --filter=blob:none https://github.com/folke/lazy.nvim.git "$LAZY_PATH"
+    echo "✓ lazy.nvim installed."
 else
-    echo "lazy.nvim already installed, skipping..."
+    echo "✓ lazy.nvim already installed, skipping..."
 fi
 
 # Install Neovim plugins
 echo "Installing Neovim plugins..."
 nvim --headless "+Lazy sync" +qall
+echo "✓ Neovim plugins installed successfully."
 
-# Setup Copilot if chosen
-if [ "$enable_copilot" = "y" ] || [ "$enable_copilot" = "Y" ]; then
-    echo "Checking GitHub Copilot authentication..."
-    if gh auth status >/dev/null 2>&1; then
-        echo "GitHub authentication detected. Copilot should work."
-    else
-        echo "Warning: GitHub authentication not detected."
-        echo "Run 'gh auth login' to authenticate before using Copilot."
-    fi
-else
-    echo "Skipping Copilot setup..."
-fi
-
-echo "Setup complete. Neovim is ready to use!"
+echo "──────────────────────────────────────────────────────────"
+echo "Installation complete. Launch Neovim and start coding!"
+echo "──────────────────────────────────────────────────────────"

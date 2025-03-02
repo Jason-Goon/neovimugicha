@@ -50,6 +50,11 @@ vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>", { noremap = true, silent
 -- Quick command to toggle Copilot
 vim.api.nvim_set_keymap("n", "<leader>co", ":Copilot toggle<CR>", { noremap = true, silent = true })
 
+-- VimTeX configuration (LaTeX support)
+vim.g.vimtex_view_method = "zathura"
+vim.g.vimtex_compiler_method = "latexmk"
+vim.g.vimtex_quickfix_mode = 0
+
 -- Function to copy LaTeX templates
 local function create_project(project_type, name)
   local root = vim.fn.stdpath("config") .. "/math-templates/"
