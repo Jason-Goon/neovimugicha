@@ -31,6 +31,10 @@ git clone --depth=1 --branch "$BRANCH" "$GITHUB_REPO" "$HOME/neovimugicha"
 echo "Moving configuration files into ~/.config/nvim/..."
 mv "$HOME/neovimugicha/"* "$CONFIG_DIR/"
 
+# Ensure math templates are placed correctly without breaking paths
+echo "Ensuring math templates are correctly placed..."
+rsync -a "$CONFIG_DIR/math-templates/" "$MATH_TEMPLATE_DIR/"
+
 # Remove the temporary cloned repo
 rm -rf "$HOME/neovimugicha"
 
