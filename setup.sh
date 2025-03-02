@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+# Ensure we're in the home directory
+cd "$HOME"
+
 GITHUB_REPO="https://github.com/Jason-Goon/neovimugicha.git"
 BRANCH="master"
 
@@ -25,14 +28,14 @@ read -p "Enable GitHub Copilot support? [y/N]: " enable_copilot
 mkdir -p "$CONFIG_DIR/lua/themes"
 mkdir -p "$LAZY_DIR"
 
-# Clone Neovim configuration
+# Clone Neovim configuration into a temporary folder
 echo "Cloning Neovim configuration from GitHub..."
 git clone --depth=1 --branch "$BRANCH" "$GITHUB_REPO" "$HOME/neovimugicha"
 
-# Move config files into ~/.config/nvim/
-echo "Moving configuration files into place..."
-cp -r "$HOME/neovimugicha/lua/"* "$CONFIG_DIR/lua/"
-cp "$HOME/neovimugicha/init.lua" "$CONFIG_DIR/init.lua"
+# Copy configuration files into ~/.config/nvim/
+echo "Copying configuration files into place..."
+cp -r "$HOME/neovimugicha/lua" "$CONFIG_DIR/"
+cp "$HOME/neovimugicha/lua/init.lua" "$CONFIG_DIR/init.lua"
 
 # Setup math templates if chosen
 if [ "$enable_math" = "y" ] || [ "$enable_math" = "Y" ]; then
@@ -40,14 +43,13 @@ if [ "$enable_math" = "y" ] || [ "$enable_math" = "Y" ]; then
     cp -r "$HOME/neovimugicha/math-templates" "$MATH_TEMPLATE_DIR"
 else
     echo "Skipping math template setup..."
-    rm -rf "$HOME/neovimugicha/math-templates"  # Remove it if user doesn't want it
 fi
 
-# Move custom theme into ~/.config/nvim/lua/themes/
+# Ensure based_theme.lua is correctly located
 echo "Ensuring based_theme.lua is in the correct location..."
 cp "$CONFIG_DIR/lua/themes/based_theme.lua" "$THEME_PATH/based_theme.lua"
 
-# Remove leftover cloned repo
+# Remove the temporary cloned repo
 rm -rf "$HOME/neovimugicha"
 
 # Check for system dependencies
@@ -60,7 +62,7 @@ for pkg in latexmk zathura node npm unzip ripgrep fd; do
 done
 
 if [ -n "$MISSING_PACKAGES" ]; then
-    echo "Warning: The following dependencies are missing: $MISSING_PACKAGES"
+    echo "Warning: The following dependencies are missing:$MISSING_PACKAGES"
     echo "Please install them manually before running Neovim."
 fi
 
