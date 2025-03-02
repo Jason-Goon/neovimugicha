@@ -42,3 +42,4 @@ if [ -d "$HOME/neovimugicha" ]; then
 fi
 
 echo "Neovimugicha has been successfully uninstalled."
+
