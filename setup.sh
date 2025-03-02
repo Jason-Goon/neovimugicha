@@ -10,7 +10,6 @@ BRANCH="master"
 CONFIG_DIR="$HOME/.config/nvim"
 LAZY_DIR="$HOME/.local/share/nvim/lazy"
 MATH_TEMPLATE_DIR="$CONFIG_DIR/math-templates"
-THEME_PATH="$CONFIG_DIR/lua/themes"
 
 echo "Checking for a clean Neovim environment..."
 if [ -d "$CONFIG_DIR" ]; then
@@ -44,10 +43,6 @@ if [ "$enable_math" = "y" ] || [ "$enable_math" = "Y" ]; then
 else
     echo "Skipping math template setup..."
 fi
-
-# Ensure based_theme.lua is correctly located
-echo "Ensuring based_theme.lua is in the correct location..."
-cp "$CONFIG_DIR/lua/themes/based_theme.lua" "$THEME_PATH/based_theme.lua"
 
 # Remove the temporary cloned repo
 rm -rf "$HOME/neovimugicha"
