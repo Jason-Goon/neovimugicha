@@ -9,8 +9,6 @@ BRANCH="master"
 
 CONFIG_DIR="$HOME/.config/nvim"
 LAZY_DIR="$HOME/.local/share/nvim/lazy"
-# MATH_TEMPLATE_DIR and THEME_PATH are defined here in case you need them later,
-# but no additional commands are needed to move or copy math-templates.
 MATH_TEMPLATE_DIR="$CONFIG_DIR/math-templates"
 THEME_PATH="$CONFIG_DIR/lua/themes"
 
@@ -22,16 +20,34 @@ fi
 
 echo "Proceeding with a clean install..."
 
-# Create ~/.config/nvim before cloning
-mkdir -p "$CONFIG_DIR"
+# Ask user for optional features
+read -p "Enable math support (LaTeX setup)? [y/N]: " enable_math
+read -p "Enable GitHub Copilot support? [y/N]: " enable_copilot
 
-# Clone Neovim configuration into a temp directory
+# Create necessary directories
+mkdir -p "$CONFIG_DIR/lua/themes"
+mkdir -p "$LAZY_DIR"
+
+# Clone Neovim configuration into a temporary folder
 echo "Cloning Neovim configuration from GitHub..."
 git clone --depth=1 --branch "$BRANCH" "$GITHUB_REPO" "$HOME/neovimugicha"
 
-# Move everything into ~/.config/nvim/
-echo "Moving configuration files into ~/.config/nvim/..."
-mv "$HOME/neovimugicha/"* "$CONFIG_DIR/"
+# Copy configuration files into ~/.config/nvim/
+echo "Copying configuration files into place..."
+cp -r "$HOME/neovimugicha/lua/"* "$CONFIG_DIR/lua/"
+cp "$HOME/neovimugicha/lua/init.lua" "$CONFIG_DIR/init.lua"
+
+# Copy the theme explicitly
+echo "Copying based_theme.lua..."
+cp "$HOME/neovimugicha/lua/themes/based_theme.lua" "$THEME_PATH/based_theme.lua"
+
+# Setup math templates if chosen
+if [ "$enable_math" = "y" ] || [ "$enable_math" = "Y" ]; then
+    echo "Enabling math templates..."
+    cp -r "$HOME/neovimugicha/math-templates" "$MATH_TEMPLATE_DIR"
+else
+    echo "Skipping math template setup..."
+fi
 
 # Remove the temporary cloned repo
 rm -rf "$HOME/neovimugicha"
@@ -62,5 +78,18 @@ fi
 # Install Neovim plugins
 echo "Installing Neovim plugins..."
 nvim --headless "+Lazy sync" +qall
+
+# Setup Copilot if chosen
+if [ "$enable_copilot" = "y" ] || [ "$enable_copilot" = "Y" ]; then
+    echo "Checking GitHub Copilot authentication..."
+    if gh auth status >/dev/null 2>&1; then
+        echo "GitHub authentication detected. Copilot should work."
+    else
+        echo "Warning: GitHub authentication not detected."
+        echo "Run 'gh auth login' to authenticate before using Copilot."
+    fi
+else
+    echo "Skipping Copilot setup..."
+fi
 
 echo "Setup complete. Neovim is ready to use!"
