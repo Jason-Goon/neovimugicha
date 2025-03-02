@@ -31,13 +31,13 @@ git clone --depth=1 --branch "$BRANCH" "$GITHUB_REPO" "$HOME/neovimugicha"
 
 # Move config files into ~/.config/nvim/
 echo "Moving configuration files into place..."
-mv "$HOME/neovimugicha/lua" "$CONFIG_DIR/"
-mv "$HOME/neovimugicha/init.lua" "$CONFIG_DIR/init.lua"
+cp -r "$HOME/neovimugicha/lua/"* "$CONFIG_DIR/lua/"
+cp "$HOME/neovimugicha/init.lua" "$CONFIG_DIR/init.lua"
 
 # Setup math templates if chosen
 if [ "$enable_math" = "y" ] || [ "$enable_math" = "Y" ]; then
     echo "Enabling math templates..."
-    mv "$HOME/neovimugicha/math-templates" "$MATH_TEMPLATE_DIR"
+    cp -r "$HOME/neovimugicha/math-templates" "$MATH_TEMPLATE_DIR"
 else
     echo "Skipping math template setup..."
     rm -rf "$HOME/neovimugicha/math-templates"  # Remove it if user doesn't want it
@@ -45,7 +45,7 @@ fi
 
 # Move custom theme into ~/.config/nvim/lua/themes/
 echo "Ensuring based_theme.lua is in the correct location..."
-mv "$CONFIG_DIR/lua/themes/based_theme.lua" "$THEME_PATH/based_theme.lua"
+cp "$CONFIG_DIR/lua/themes/based_theme.lua" "$THEME_PATH/based_theme.lua"
 
 # Remove leftover cloned repo
 rm -rf "$HOME/neovimugicha"
@@ -91,3 +91,4 @@ else
 fi
 
 echo "Setup complete. Neovim is ready to use!"
+
