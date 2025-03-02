@@ -45,24 +45,43 @@ Once you have the global deps run this
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/Jason-Goon/neovimugicha/master/setup.sh)"
 ```
 
+To delete the configuration for uninstall or before install if any nvim dotfiles exist 
 
-Features
+```sh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/Jason-Goon/neovimugicha/master/cleanup.sh)"
+```
 
-    Lazy.nvim for plugin management 
-    Nvim-Tree file browser – <Space>e to toggle it
-    Treesitter syntax highlighting 
-    LSP support – Rust, C, C++, Python, TypeScript, HTML, CSS
-    Git integration 
-    Based Theme
 
-Keybinds
+## Features
 
-    <Space>e → Toggle file tree (nvim-tree)
-    <Space>q → Close buffer
-    <Space>w → Save file
+- **Lazy.nvim** for plugin management  
+- **Nvim-Tree** file browser – `<Space>e` to toggle  
+- **Treesitter** syntax highlighting  
+- **LSP support** – Rust, C, C++, Python, TypeScript, HTML, CSS  
+- **Git/ copilot integration**  
+- **Based Theme**  
+- **LaTeX support with vimtex** – Live preview via Zathura  
+- **GitHub Copilot integration** – `<Space>co` to toggle  
+- **ASCII art start screen**  
+- **Quick project setup for Math, Notes, and Assignments**  
+- **Standalone configuration files pulled from GitHub**  
 
-Notes
 
-    If Mason fails to install LSPs, run :Mason in neovim and check :MasonLog.
-    Run cleanup.sh if you want a clean reinstall or delete.
-    If a plugin doesn’t load, run :Lazy 
+## Keybinds
+
+- `<Space>e` → Toggle file tree (Nvim-Tree)  
+- `<Space>q` → Close buffer  
+- `<Space>w` → Save file  
+- `<Space>co` → Toggle GitHub Copilot  
+- `:NewMathProject <name>` → Create a new Math project  
+- `:NewNotes <name>` → Create a new Notes project  
+- `:NewAssignment <name>` → Create a new Assignment project  
+
+
+## Notes  
+
+- **To reset or uninstall**, run `cleanup.sh`.  
+- **If a plugin doesn’t load**, run `:Lazy sync` inside Neovim.  
+- **LSPs should install automatically** via Mason. If missing, verify dependencies.  
+- **System dependencies must be installed manually** before running Neovim.  
+
