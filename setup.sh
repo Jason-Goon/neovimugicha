@@ -37,9 +37,6 @@ echo "Copying configuration files into place..."
 cp -r "$HOME/neovimugicha/lua/"* "$CONFIG_DIR/lua/"
 cp "$HOME/neovimugicha/lua/init.lua" "$CONFIG_DIR/init.lua"
 
-# Copy the theme explicitly
-echo "Copying based_theme.lua..."
-cp "$HOME/neovimugicha/lua/themes/based_theme.lua" "$THEME_PATH/based_theme.lua"
 
 # Setup math templates if chosen
 if [ "$enable_math" = "y" ] || [ "$enable_math" = "Y" ]; then
